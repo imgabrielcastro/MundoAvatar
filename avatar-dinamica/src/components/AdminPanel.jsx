@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -12,34 +12,34 @@ import {
   Tabs,
   Tab,
   Divider,
-  CircularProgress
-} from '@mui/material';
-import { supabase } from '../services/supabaseClient';
-import { useNavigate } from 'react-router-dom';
+  CircularProgress,
+} from "@mui/material";
+import { supabase } from "../services/supabaseClient";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminPanel() {
   const [tab, setTab] = useState(0);
-  const [fogo, setFogo] = useState('');
-  const [agua, setAgua] = useState('');
-  const [terra, setTerra] = useState('');
-  const [ar, setAr] = useState('');
-  const [avatar, setAvatar] = useState('');
-  const [dataInit, setDataInit] = useState('');
-  const [dataWin, setDataWin] = useState('');
+  const [fogo, setFogo] = useState("");
+  const [agua, setAgua] = useState("");
+  const [terra, setTerra] = useState("");
+  const [ar, setAr] = useState("");
+  const [avatar, setAvatar] = useState("");
+  const [dataInit, setDataInit] = useState("");
+  const [dataWin, setDataWin] = useState("");
   const [editId, setEditId] = useState(null);
   const [registros, setRegistros] = useState([]);
   const [funcionarios, setFuncionarios] = useState([]);
-  const [nomeFuncionario, setNomeFuncionario] = useState('');
-  const [fotoFuncionarioUrl, setFotoFuncionarioUrl] = useState('');
-  const [loading, setLoading] = useState(false); 
+  const [nomeFuncionario, setNomeFuncionario] = useState("");
+  const [fotoFuncionarioUrl, setFotoFuncionarioUrl] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const isAdmin = localStorage.getItem('isAdmin');
-    if (!isAdmin || isAdmin !== 'true') {
-      alert('Você não tem permissão para acessar esta página!');
-      navigate('/login');
+    const isAdmin = localStorage.getItem("isAdmin");
+    if (!isAdmin || isAdmin !== "true") {
+      alert("Você não tem permissão para acessar esta página!");
+      navigate("/login");
     } else {
       fetchRegistros();
       fetchFuncionarios();
@@ -48,74 +48,75 @@ export default function AdminPanel() {
 
   useEffect(() => {
     if (
-      fogo && agua && terra && ar &&
+      fogo &&
+      agua &&
+      terra &&
+      ar &&
       fogo === agua &&
       agua === terra &&
       terra === ar &&
-      fogo !== 'Nenhum'
+      fogo !== "Nenhum"
     ) {
       setAvatar(fogo);
     } else {
-      setAvatar('');
+      setAvatar("");
     }
   }, [fogo, agua, terra, ar]);
 
   const fetchRegistros = async () => {
     const { data, error } = await supabase
-      .from('dinamica_avatar')
-      .select('*')
-      .order('data_win', { ascending: false });
+      .from("dinamica_avatar")
+      .select("*")
+      .order("data_win", { ascending: false });
     if (!error) setRegistros(data);
   };
 
   const fetchFuncionarios = async () => {
     const { data, error } = await supabase
-      .from('funcionarios')
-      .select('id, nome, img');
+      .from("funcionarios")
+      .select("id, nome, img");
     if (!error) setFuncionarios(data);
   };
 
   const handleCadastrarFuncionario = async () => {
     if (!nomeFuncionario || !fotoFuncionarioUrl) {
-      alert('Nome e URL da Foto são obrigatórios!');
+      alert("Nome e URL da Foto são obrigatórios!");
       return;
     }
 
     setLoading(true);
 
-    const { error: insertError } = await supabase
-      .from('funcionarios')
-      .insert([{
+    const { error: insertError } = await supabase.from("funcionarios").insert([
+      {
         nome: nomeFuncionario,
         img: fotoFuncionarioUrl,
-      }]);
-
+      },
+    ]);
 
     setLoading(false);
 
     if (insertError) {
-      alert('Erro ao salvar colaborador: ' + insertError.message);
+      alert("Erro ao salvar colaborador: " + insertError.message);
     } else {
-      alert('Colaborador cadastrado com sucesso!');
-      setNomeFuncionario('');
-      setFotoFuncionarioUrl('');
+      alert("Colaborador cadastrado com sucesso!");
+      setNomeFuncionario("");
+      setFotoFuncionarioUrl("");
       fetchFuncionarios();
     }
   };
 
   const handleDeleteFuncionario = async (id) => {
-    const confirm = window.confirm("Tem certeza que deseja excluir este colaborador?");
+    const confirm = window.confirm(
+      "Tem certeza que deseja excluir este colaborador?"
+    );
     if (!confirm) return;
 
-    const { error } = await supabase
-      .from('funcionarios')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from("funcionarios").delete().eq("id", id);
 
     if (error) {
-      alert('Erro ao deletar funcionário: ' + error.message);
+      alert("Erro ao deletar funcionário: " + error.message);
     } else {
-      alert('Funcionário deletado com sucesso!');
+      alert("Funcionário deletado com sucesso!");
       fetchFuncionarios();
     }
   };
@@ -128,23 +129,23 @@ export default function AdminPanel() {
       ar: ar || null,
       avatar: avatar || null,
       data_init: dataInit || null,
-      data_win: dataWin || null
+      data_win: dataWin || null,
     };
 
     let response;
     if (editId) {
       response = await supabase
-        .from('dinamica_avatar')
+        .from("dinamica_avatar")
         .update(payload)
-        .eq('id', editId);
+        .eq("id", editId);
     } else {
-      response = await supabase.from('dinamica_avatar').insert([payload]);
+      response = await supabase.from("dinamica_avatar").insert([payload]);
     }
 
     if (response.error) {
-      alert('Erro ao salvar: ' + response.error.message);
+      alert("Erro ao salvar: " + response.error.message);
     } else {
-      alert(editId ? 'Registro atualizado!' : 'Registro salvo com sucesso!');
+      alert(editId ? "Registro atualizado!" : "Registro salvo com sucesso!");
       limparFormulario();
       fetchRegistros();
     }
@@ -152,41 +153,43 @@ export default function AdminPanel() {
 
   const handleEdit = (registro) => {
     setEditId(registro.id);
-    setFogo(registro.fogo || '');
-    setAgua(registro.agua || '');
-    setTerra(registro.terra || '');
-    setAr(registro.ar || '');
-    setAvatar(registro.avatar || '');
-    setDataInit(registro.data_init || '');
-    setDataWin(registro.data_win || '');
+    setFogo(registro.fogo || "");
+    setAgua(registro.agua || "");
+    setTerra(registro.terra || "");
+    setAr(registro.ar || "");
+    setAvatar(registro.avatar || "");
+    setDataInit(registro.data_init || "");
+    setDataWin(registro.data_win || "");
     setTab(0);
   };
 
   const handleDelete = async (id) => {
-    const confirm = window.confirm("Tem certeza que deseja excluir este registro?");
+    const confirm = window.confirm(
+      "Tem certeza que deseja excluir este registro?"
+    );
     if (!confirm) return;
 
     const { error } = await supabase
-      .from('dinamica_avatar')
+      .from("dinamica_avatar")
       .delete()
-      .eq('id', id);
+      .eq("id", id);
 
     if (error) {
-      alert('Erro ao deletar: ' + error.message);
+      alert("Erro ao deletar: " + error.message);
     } else {
-      alert('Registro deletado com sucesso!');
+      alert("Registro deletado com sucesso!");
       fetchRegistros();
     }
   };
 
   const limparFormulario = () => {
-    setFogo('');
-    setAgua('');
-    setTerra('');
-    setAr('');
-    setAvatar('');
-    setDataInit('');
-    setDataWin('');
+    setFogo("");
+    setAgua("");
+    setTerra("");
+    setAr("");
+    setAvatar("");
+    setDataInit("");
+    setDataWin("");
     setEditId(null);
   };
 
@@ -215,12 +218,16 @@ export default function AdminPanel() {
           variant="contained"
           onClick={handleCadastrarFuncionario}
           sx={{
-            backgroundColor: '#9A1FFF',
-            color: '#fff',
-            '&:hover': { backgroundColor: '#8014d8' }
+            backgroundColor: "#9A1FFF",
+            color: "#fff",
+            "&:hover": { backgroundColor: "#8014d8" },
           }}
         >
-          {loading ? <CircularProgress size={24} color="inherit" /> : 'Cadastrar Colaborador'}
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            "Cadastrar Colaborador"
+          )}
         </Button>
       </Box>
       <Divider sx={{ my: 3 }} />
@@ -228,17 +235,26 @@ export default function AdminPanel() {
         Colaboradores Cadastrados
       </Typography>
       {funcionarios.map((funcionario) => (
-        <Box key={funcionario.id} sx={{ mb: 3, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
+        <Box
+          key={funcionario.id}
+          sx={{ mb: 3, p: 2, border: "1px solid #ccc", borderRadius: 2 }}
+        >
           <Typography variant="subtitle2" gutterBottom>
             {funcionario.nome}
           </Typography>
-          <img src={funcionario.img} alt="Foto do colaborador" width={120} height={120} style={{ borderRadius: '50%' }} />
+          <img
+            src={funcionario.img}
+            alt="Foto do colaborador"
+            width={120}
+            height={120}
+            style={{ borderRadius: "50%" }}
+          />
           <Box mt={2} display="flex" gap={2}>
             <Button
               size="small"
               variant="outlined"
               onClick={() => handleDeleteFuncionario(funcionario.id)}
-              sx={{ color: '#9A1FFF', borderColor: '#9A1FFF' }}
+              sx={{ color: "#9A1FFF", borderColor: "#9A1FFF" }}
             >
               Excluir Funcionário
             </Button>
@@ -250,11 +266,11 @@ export default function AdminPanel() {
 
   const FormularioCadastroDinâmica = () => (
     <>
-      {[ 
-        { label: '🔥 Fogo', state: fogo, setState: setFogo },
-        { label: '🌊 Água', state: agua, setState: setAgua },
-        { label: '🪨 Terra', state: terra, setState: setTerra },
-        { label: '💨 Ar', state: ar, setState: setAr },
+      {[
+        { label: "🔥 Fogo", state: fogo, setState: setFogo },
+        { label: "🌊 Água", state: agua, setState: setAgua },
+        { label: "🪨 Terra", state: terra, setState: setTerra },
+        { label: "💨 Ar", state: ar, setState: setAr },
       ].map(({ label, state, setState }) => (
         <FormControl fullWidth sx={{ mb: 2 }} key={label}>
           <InputLabel>{label}</InputLabel>
@@ -273,7 +289,7 @@ export default function AdminPanel() {
       ))}
 
       <FormControl fullWidth sx={{ mb: avatar ? 1 : 3 }}>
-        <InputLabel sx={{ color: avatar ? '#9A1FFF' : undefined }}>
+        <InputLabel sx={{ color: avatar ? "#9A1FFF" : undefined }}>
           🌀 Avatar
         </InputLabel>
         <Select
@@ -281,19 +297,23 @@ export default function AdminPanel() {
           label="🌀 Avatar"
           disabled
           sx={{
-            backgroundColor: avatar ? '#f7edff' : undefined,
-            boxShadow: avatar ? '0 0 12px 4px rgba(154, 31, 255, 0.4)' : 'none',
-            transition: 'all 0.3s ease-in-out',
-            '& .MuiSelect-select': {
-              fontWeight: avatar ? 'bold' : 'normal',
-              color: avatar ? '#9A1FFF' : 'inherit',
+            backgroundColor: avatar ? "#f7edff" : undefined,
+            boxShadow: avatar ? "0 0 12px 4px rgba(154, 31, 255, 0.4)" : "none",
+            transition: "all 0.3s ease-in-out",
+            "& .MuiSelect-select": {
+              fontWeight: avatar ? "bold" : "normal",
+              color: avatar ? "#9A1FFF" : "inherit",
             },
           }}
         >
           <MenuItem value="">Nenhum</MenuItem>
-          {funcionarios.filter(n => n.nome !== 'Nenhum').map(({ nome }) => (
-            <MenuItem key={nome} value={nome}>{nome}</MenuItem>
-          ))}
+          {funcionarios
+            .filter((n) => n.nome !== "Nenhum")
+            .map(({ nome }) => (
+              <MenuItem key={nome} value={nome}>
+                {nome}
+              </MenuItem>
+            ))}
         </Select>
       </FormControl>
 
@@ -323,20 +343,20 @@ export default function AdminPanel() {
           variant="contained"
           onClick={handleSubmit}
           sx={{
-            backgroundColor: avatar ? '#9A1FFF' : '#9A1FFF',
-            fontWeight: 'bold',
-            animation: avatar ? 'pulse 1.5s infinite' : 'none',
-            '@keyframes pulse': {
-              '0%': { boxShadow: '0 0 0 0 rgba(154,31,255, 0.6)' },
-              '70%': { boxShadow: '0 0 0 10px rgba(154,31,255, 0)' },
-              '100%': { boxShadow: '0 0 0 0 rgba(154,31,255, 0)' },
+            backgroundColor: avatar ? "#9A1FFF" : "#9A1FFF",
+            fontWeight: "bold",
+            animation: avatar ? "pulse 1.5s infinite" : "none",
+            "@keyframes pulse": {
+              "0%": { boxShadow: "0 0 0 0 rgba(154,31,255, 0.6)" },
+              "70%": { boxShadow: "0 0 0 10px rgba(154,31,255, 0)" },
+              "100%": { boxShadow: "0 0 0 0 rgba(154,31,255, 0)" },
             },
-            '&:hover': {
-              backgroundColor: avatar ? '#8014d8' : '#a099b5'
-            }
+            "&:hover": {
+              backgroundColor: avatar ? "#8014d8" : "#a099b5",
+            },
           }}
         >
-          {editId ? 'Atualizar Registro' : 'Salvar Dinâmica'}
+          {editId ? "Atualizar Registro" : "Salvar Dinâmica"}
         </Button>
 
         <Button
@@ -344,14 +364,14 @@ export default function AdminPanel() {
           variant="outlined"
           onClick={limparFormulario}
           sx={{
-            borderColor: '#9A1FFF',
-            color: '#9A1FFF',
-            fontWeight: 'bold',
-            '&:hover': {
-              backgroundColor: '#f0e5ff',
-              borderColor: '#8014d8',
-              color: '#8014d8'
-            }
+            borderColor: "#9A1FFF",
+            color: "#9A1FFF",
+            fontWeight: "bold",
+            "&:hover": {
+              backgroundColor: "#f0e5ff",
+              borderColor: "#8014d8",
+              color: "#8014d8",
+            },
           }}
         >
           Limpar
@@ -367,13 +387,18 @@ export default function AdminPanel() {
       alignItems="flex-start"
       minHeight="100vh"
       sx={{
-        backgroundColor: avatar ? '#f8f3ff' : '#f3f3f3',
+        backgroundColor: avatar ? "#f8f3ff" : "#f3f3f3",
         pt: 4,
-        transition: 'background-color 0.4s ease-in-out'
+        transition: "background-color 0.4s ease-in-out",
       }}
     >
-      <Paper elevation={4} sx={{ p: 4, width: '90%', maxWidth: 700 }}>
-        <Tabs value={tab} onChange={(e, val) => setTab(val)} centered sx={{ mb: 3 }}>
+      <Paper elevation={4} sx={{ p: 4, width: "90%", maxWidth: 700 }}>
+        <Tabs
+          value={tab}
+          onChange={(e, val) => setTab(val)}
+          centered
+          sx={{ mb: 3 }}
+        >
           <Tab label="Cadastrar Dinâmica" />
           <Tab label="Gerenciar Dinâmica" />
           <Tab label="Cadastrar Colaborador" />
@@ -386,21 +411,34 @@ export default function AdminPanel() {
         ) : tab === 1 ? (
           <Box>
             {registros.map((registro) => (
-              <Box key={registro.id} sx={{ mb: 3, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
+              <Box
+                key={registro.id}
+                sx={{ mb: 3, p: 2, border: "1px solid #ccc", borderRadius: 2 }}
+              >
                 <Typography variant="subtitle2" gutterBottom>
                   📅 {registro.data_win}
                 </Typography>
-                <Typography variant="body2">🔥 {registro.fogo || 'Nenhum'}</Typography>
-                <Typography variant="body2">🌊 {registro.agua || 'Nenhum'}</Typography>
-                <Typography variant="body2">🪨 {registro.terra || 'Nenhum'}</Typography>
-                <Typography variant="body2">💨 {registro.ar || 'Nenhum'}</Typography>
-                <Typography variant="body2">🌀 Avatar: {registro.avatar || 'Nenhum'}</Typography>
+                <Typography variant="body2">
+                  🔥 {registro.fogo || "Nenhum"}
+                </Typography>
+                <Typography variant="body2">
+                  🌊 {registro.agua || "Nenhum"}
+                </Typography>
+                <Typography variant="body2">
+                  🪨 {registro.terra || "Nenhum"}
+                </Typography>
+                <Typography variant="body2">
+                  💨 {registro.ar || "Nenhum"}
+                </Typography>
+                <Typography variant="body2">
+                  🌀 Avatar: {registro.avatar || "Nenhum"}
+                </Typography>
                 <Box mt={2} display="flex" gap={2}>
                   <Button
                     size="small"
                     variant="outlined"
                     onClick={() => handleEdit(registro)}
-                    sx={{ color: '#9A1FFF', borderColor: '#9A1FFF' }}
+                    sx={{ color: "#9A1FFF", borderColor: "#9A1FFF" }}
                   >
                     Editar
                   </Button>
