@@ -94,9 +94,9 @@ export default function AdminPanel() {
     setLoading(false);
 
     if (insertError) {
-      alert('Erro ao salvar funcionário: ' + insertError.message);
+      alert('Erro ao salvar colaborador: ' + insertError.message);
     } else {
-      alert('Funcionário cadastrado com sucesso!');
+      alert('Colaborador cadastrado com sucesso!');
       setNomeFuncionario('');
       setFotoFuncionarioUrl('');
       fetchFuncionarios();
@@ -104,7 +104,7 @@ export default function AdminPanel() {
   };
 
   const handleDeleteFuncionario = async (id) => {
-    const confirm = window.confirm("Tem certeza que deseja excluir este funcionário?");
+    const confirm = window.confirm("Tem certeza que deseja excluir este colaborador?");
     if (!confirm) return;
 
     const { error } = await supabase
@@ -193,10 +193,10 @@ export default function AdminPanel() {
   const FormularioCadastroFuncionario = () => (
     <Box>
       <Typography variant="h6" gutterBottom>
-        Cadastrar Novo Funcionário
+        Cadastrar Novo Colaborador
       </Typography>
       <TextField
-        label="Nome do Funcionário"
+        label="Nome do colaborador"
         fullWidth
         value={nomeFuncionario}
         onChange={(e) => setNomeFuncionario(e.target.value)}
@@ -220,19 +220,19 @@ export default function AdminPanel() {
             '&:hover': { backgroundColor: '#8014d8' }
           }}
         >
-          {loading ? <CircularProgress size={24} color="inherit" /> : 'Cadastrar Funcionário'}
+          {loading ? <CircularProgress size={24} color="inherit" /> : 'Cadastrar Colaborador'}
         </Button>
       </Box>
       <Divider sx={{ my: 3 }} />
       <Typography variant="h6" gutterBottom>
-        Funcionários Cadastrados
+        Colaboradores Cadastrados
       </Typography>
       {funcionarios.map((funcionario) => (
         <Box key={funcionario.id} sx={{ mb: 3, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
           <Typography variant="subtitle2" gutterBottom>
             {funcionario.nome}
           </Typography>
-          <img src={funcionario.img} alt="Foto do Funcionário" width={120} height={120} style={{ borderRadius: '50%' }} />
+          <img src={funcionario.img} alt="Foto do colaborador" width={120} height={120} style={{ borderRadius: '50%' }} />
           <Box mt={2} display="flex" gap={2}>
             <Button
               size="small"
@@ -376,7 +376,7 @@ export default function AdminPanel() {
         <Tabs value={tab} onChange={(e, val) => setTab(val)} centered sx={{ mb: 3 }}>
           <Tab label="Cadastrar Dinâmica" />
           <Tab label="Gerenciar Dinâmica" />
-          <Tab label="Cadastrar Funcionário" />
+          <Tab label="Cadastrar Colaborador" />
         </Tabs>
 
         <Divider sx={{ mb: 3 }} />
