@@ -4,16 +4,16 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import theme from './theme'; // o tema que você criou
+import theme from './theme'; 
 
 
-import '@fontsource/roboto'; // importa a Roboto corretamente
+import '@fontsource/roboto'; 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <CssBaseline /> {/* limpa estilos padrões do navegador */}
+      <CssBaseline />
       <App />
     </ThemeProvider>
   </React.StrictMode>
